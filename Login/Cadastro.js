@@ -3,10 +3,16 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import {validaEmail, validaSenha, validaConfirmacaoSenha} from './LoginPresenter'
+import {
+  validaNome,
+  validaEmail,
+  validaSenha,
+  validaConfirmacaoSenha
+} from './LoginPresenter'
 import {
   inicializeFirebase,
-  cadastrarUsuario
+  cadastrarUsuario,
+  criarUsuario
 } from '../Service/Firebase';
 import InputCustomizado from '../componentes/InputCustomizado';
 import BotaoCustomizado from '../componentes/BotaoCustomizado';
@@ -22,12 +28,15 @@ export default class Cadastro extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      nome: '',
       email: '',
       senha: '',
       confirmaSenha: '',
+      estiloInputNome: styles.input,
       estiloInputEmail: styles.input,
       estiloInputSenha: styles.input,
       estiloInputConfirmaSenha: styles.input,
+      msgErroNome: '',
       msgErroEmail: '',
       msgErroSenha: '',
       msgErroConfirmaSenha: ''
@@ -39,8 +48,15 @@ export default class Cadastro extends React.Component {
   }
 
   cadastrar = async () => {
-    const {email, senha, confirmaSenha} = this.state;
+    const {nome, email, senha, confirmaSenha} = this.state;
     let contemErros = false;
+    if (validaNome(nome)) {
+      this.nomeOK();
+    }
+    else {
+      this.trataErroNome();
+      contemErros = true;
+    }
     if (validaEmail(email)) {
       this.emailOK();
     }
@@ -75,6 +91,7 @@ export default class Cadastro extends React.Component {
             senha: '',
             confirmaSenha: ''
           });
+          criarUsuario(nome);
           alert("Usuário cadastrado com sucesso.");
           this.voltar();
         })
@@ -84,6 +101,20 @@ export default class Cadastro extends React.Component {
 
   voltar = () => {
     this.props.navigation.goBack();
+  }
+
+  nomeOK = () => {
+    this.setState({
+      estiloInputNome: styles.input,
+      msgErroNome: ''
+    });
+  }
+
+  trataErroNome = () => {
+    this.setState({
+      estiloInputNome: styles.inputError,
+      msgErroNome: 'Nome inválido.'
+    });
   }
 
   emailOK = () => {
@@ -132,6 +163,13 @@ export default class Cadastro extends React.Component {
     return (
       <View style={styles.container}>
         <LogoJogo />
+        <InputCustomizado
+          msgErro={this.state.msgErroNome}
+          style={this.state.estiloInputNome}
+          label="Digite seu nome"
+          value={this.state.nome}
+          onChange={nome => this.setState({nome})}
+        />
         <InputCustomizado
           msgErro={this.state.msgErroEmail}
           style={this.state.estiloInputEmail}

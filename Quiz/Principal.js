@@ -27,6 +27,7 @@ export default class Principal extends React.Component {
   }
 
   sair = async () => {
+    this.props.navigation.navigate('Inicio');
     logout();
   }
   

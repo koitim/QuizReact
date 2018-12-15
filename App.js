@@ -7,6 +7,8 @@ import Login from './Login/Login';
 import Cadastro from './Login/Cadastro';
 import Principal from './Quiz/Principal';
 import Jogar from './Quiz/Jogar';
+import Ranking from './Quiz/Ranking';
+import Resultado from './Quiz/Resultado';
 
 export default class App extends React.Component {
 
@@ -18,10 +20,12 @@ export default class App extends React.Component {
 }
 
 const AppNavigator = createStackNavigator({
-  Inicio: Login,
+  Inicio: Principal,
   Cadastro: Cadastro,
   Quiz: Principal,
-  Jogo: Jogar
+  Jogo: Jogar,
+  Ranking: Ranking,
+  Resultado: Resultado
 }, {
   initialRouteName: "Inicio"
 });
