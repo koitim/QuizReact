@@ -85,10 +85,10 @@ function getDataAtualFormatada() {
 const BD = 'Ranking';
 
 const conexaoFirebase = {
-  apiKey: "AIzaSyARnIiz5wkc5YA6v8ZXgaIkE8l6cEzTfkY",
-  authDomain: "quiz-react-5a7c9.firebaseapp.com",
-  databaseURL: "https://quiz-react-5a7c9.firebaseio.com",
-  projectId: "quiz-react-5a7c9",
-  storageBucket: "quiz-react-5a7c9.appspot.com",
-  messagingSenderId: "598792347889"
+  apiKey: '',
+  authDomain: '',
+  databaseURL: '',
+  projectId: '',
+  storageBucket: '',
+  messagingSenderId: ''
 };
