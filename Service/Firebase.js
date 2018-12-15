@@ -1,12 +1,14 @@
 
 import firebase from 'firebase';
 
+// Geral
 export function inicializeFirebase() {
   if (!firebase.apps.length) {
     firebase.initializeApp(conexaoFirebase);
   }
 }
 
+// Autenticação
 export async function getUsuarioAtual() {
   return await firebase.auth().currentUser;
 }
@@ -23,38 +25,17 @@ export function cadastrarUsuario(email, senha) {
   return firebase.auth().createUserWithEmailAndPassword(email, senha);
 }
 
-export const conexaoFirebase = {
-  apiKey: "AIzaSyARnIiz5wkc5YA6v8ZXgaIkE8l6cEzTfkY",
-  authDomain: "quiz-react-5a7c9.firebaseapp.com",
-  databaseURL: "https://quiz-react-5a7c9.firebaseio.com",
-  projectId: "quiz-react-5a7c9",
-  storageBucket: "quiz-react-5a7c9.appspot.com",
-  messagingSenderId: "598792347889"
-};
-
+// Banco de dados
 export function criarUsuario(nome){
   const pontuacao = 0;
   const dataUltimoJogo = getDataAtualFormatada();
   const uid = firebase.auth().currentUser.uid;
-  firebase
-    .database()
-    .ref()
-    .child(BD)
-    .child(uid)
-    .set({nome, pontuacao, dataUltimoJogo})
-    
-};
-
-export function readUserData() {
-  firebase.database().ref('Users/').once('value', function (snapshot) {
-      console.log(snapshot.val())
-  });
-};
-
-export function readUserData2() {
-  firebase.database().ref('Users/').on('value', function (snapshot) {
-      console.log(snapshot.val())
-  });
+  return firebase
+          .database()
+          .ref()
+          .child(BD)
+          .child(uid)
+          .set({nome, pontuacao, dataUltimoJogo});
 };
 
 export function atualizarPontuacao(pontuacao){
@@ -77,17 +58,17 @@ export function atualizarPontuacao(pontuacao){
     });
 };
 
-export function recuperarRanking(funcaoRetorno) {
+export function recuperarRanking(callBack) {
   firebase
     .database()
     .ref()
     .child(BD)
     .on('value', function(snapshot) {
-      let items = [];
+      let usuarios = [];
       snapshot.forEach(childSnapshot => {
-          items.push(childSnapshot.val());
+          usuarios.push(childSnapshot.val());
       });
-      funcaoRetorno(items);
+      callBack(usuarios);
     })
 }
 
@@ -102,3 +83,12 @@ function getDataAtualFormatada() {
 }
 
 const BD = 'Ranking';
+
+const conexaoFirebase = {
+  apiKey: "AIzaSyARnIiz5wkc5YA6v8ZXgaIkE8l6cEzTfkY",
+  authDomain: "quiz-react-5a7c9.firebaseapp.com",
+  databaseURL: "https://quiz-react-5a7c9.firebaseio.com",
+  projectId: "quiz-react-5a7c9",
+  storageBucket: "quiz-react-5a7c9.appspot.com",
+  messagingSenderId: "598792347889"
+};

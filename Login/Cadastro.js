@@ -8,7 +8,7 @@ import {
   validaEmail,
   validaSenha,
   validaConfirmacaoSenha
-} from './LoginPresenter'
+} from './Funcoes'
 import {
   inicializeFirebase,
   cadastrarUsuario,
@@ -27,20 +27,7 @@ export default class Cadastro extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {
-      nome: '',
-      email: '',
-      senha: '',
-      confirmaSenha: '',
-      estiloInputNome: styles.input,
-      estiloInputEmail: styles.input,
-      estiloInputSenha: styles.input,
-      estiloInputConfirmaSenha: styles.input,
-      msgErroNome: '',
-      msgErroEmail: '',
-      msgErroSenha: '',
-      msgErroConfirmaSenha: ''
-    };
+    this.state = dadosIniciais;
   }
 
   componentWillMount() {
@@ -51,51 +38,49 @@ export default class Cadastro extends React.Component {
     const {nome, email, senha, confirmaSenha} = this.state;
     let contemErros = false;
     if (validaNome(nome)) {
-      this.nomeOK();
+      this.atualizaNome(styles.input, '');
     }
     else {
-      this.trataErroNome();
+      this.atualizaNome(styles.inputError, 'Nome inválido.');
       contemErros = true;
     }
     if (validaEmail(email)) {
-      this.emailOK();
+      this.atualizaEmail(styles.input, '');
     }
     else {
-      this.trataErroEmail();
+      this.atualizaEmail(styles.inputError, 'Email inválido.');
       contemErros = true;
     }
     if (validaSenha(senha)) {
-      this.senhaOK();
+      this.atualizaSenha(styles.input, '');
     }
     else {
-      this.trataErroSenha();
+      this.atualizaSenha(styles.inputError, 'Senha é obrigatório.');
       contemErros = true;
     }
     if (validaConfirmacaoSenha(senha, confirmaSenha)) {
-      this.confirmaSenhaOK();
+      this.atualizaConfirmaSenha(styles.input, '');
     }
     else {
-      this.trataErroConfirmaSenha();
+      this.atualizaConfirmaSenha(styles.inputError, 'Confirmação deve ser igual a senha.');
       contemErros = true;
     }
-    if (confirmaSenha !== senha) {
-      console.log("Deve ser igual a senha");
-      return;
-    }
     if (!contemErros) {
-      const promisse = cadastrarUsuario(email, senha);
-      promisse
+      cadastrarUsuario(email, senha)
         .then(() => {
-          this.setState({
-            email: '',
-            senha: '',
-            confirmaSenha: ''
-          });
-          criarUsuario(nome);
-          alert("Usuário cadastrado com sucesso.");
-          this.voltar();
+          criarUsuario(nome)
+            .then(() => {
+              alert("Usuário cadastrado com sucesso.");
+              this.setState(dadosIniciais);
+              this.voltar();
+            })
+            .catch((erro) => {
+              alert(erro);
+            })
         })
-        .catch((erro) => {alert(erro)});
+        .catch((erro) => {
+          alert(erro)
+        });
     }
   }
 
@@ -103,59 +88,31 @@ export default class Cadastro extends React.Component {
     this.props.navigation.goBack();
   }
 
-  nomeOK = () => {
+  atualizaNome = (estilo, msgErro) => {
     this.setState({
-      estiloInputNome: styles.input,
-      msgErroNome: ''
+      estiloInputNome: estilo,
+      msgErroNome: msgErro
     });
   }
 
-  trataErroNome = () => {
+  atualizaEmail = (estilo, msgErro) => {
     this.setState({
-      estiloInputNome: styles.inputError,
-      msgErroNome: 'Nome inválido.'
+      estiloInputEmail: estilo,
+      msgErroEmail: msgErro
     });
   }
 
-  emailOK = () => {
+  atualizaSenha = (estilo, msgErro) => {
     this.setState({
-      estiloInputEmail: styles.input,
-      msgErroEmail: ''
+      estiloInputSenha: estilo,
+      msgErroSenha: msgErro
     });
   }
 
-  trataErroEmail = () => {
+  atualizaConfirmaSenha = (estilo, msgErro) => {
     this.setState({
-      estiloInputEmail: styles.inputError,
-      msgErroEmail: 'Email inválido.'
-    });
-  }
-
-  senhaOK = () => {
-    this.setState({
-      estiloInputSenha: styles.input,
-      msgErroSenha: ''
-    });
-  }
-
-  trataErroSenha = () => {
-    this.setState({
-      estiloInputSenha: styles.inputError,
-      msgErroSenha: 'Senha é obrigatório.'
-    });
-  }
-
-  confirmaSenhaOK = () => {
-    this.setState({
-      estiloInputConfirmaSenha: styles.input,
-      msgErroConfirmaSenha: ''
-    });
-  }
-
-  trataErroConfirmaSenha = () => {
-    this.setState({
-      estiloInputConfirmaSenha: styles.inputError,
-      msgErroConfirmaSenha: 'Confirmação deve ser igual a senha.'
+      estiloInputConfirmaSenha: estilo,
+      msgErroConfirmaSenha: msgErro
     });
   }
   
@@ -224,3 +181,18 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+const dadosIniciais = {
+  nome: '',
+  email: '',
+  senha: '',
+  confirmaSenha: '',
+  estiloInputNome: styles.input,
+  estiloInputEmail: styles.input,
+  estiloInputSenha: styles.input,
+  estiloInputConfirmaSenha: styles.input,
+  msgErroNome: '',
+  msgErroEmail: '',
+  msgErroSenha: '',
+  msgErroConfirmaSenha: ''
+};

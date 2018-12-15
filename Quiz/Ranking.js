@@ -2,10 +2,9 @@ import React, { Component } from 'react';
 import {
     View,
     StyleSheet,
-    Text,
-    TouchableHighlight,
     FlatList
-  } from 'react-native';
+} from 'react-native';
+import ItemRanking from '../componentes/ItemRanking';
 import BotaoCustomizado from '../componentes/BotaoCustomizado';
 import {
   inicializeFirebase,
@@ -28,10 +27,10 @@ export default class Ranking extends Component {
 
     async componentWillMount() {
       inicializeFirebase();
-      recuperarRanking(this.funcaoRetorno);
+      recuperarRanking(this.ordenarResultado);
     }
 
-    funcaoRetorno = (resultado) => {
+    ordenarResultado = (resultado) => {
         const resultadoOrdenado = resultado.sort((a, b) => {
             if (a.pontuacao > b.pontuacao) {
               return -1;
@@ -53,16 +52,7 @@ export default class Ranking extends Component {
             <View style={styles.container}>
                 <FlatList
                     data={this.state.ranking}
-                    renderItem={({item}) => 
-                        <TouchableHighlight style={styles.lista}>
-                            <View style={styles.item}>
-                                <Text style={styles.texto}>{item.nome}</Text>
-                                <View style={{flexDirection:'row'}}>
-                                    <Text style={styles.texto}>Pontos: {item.pontuacao}</Text>
-                                    <Text style={styles.texto}>{item.dataUltimoJogo}</Text>
-                                </View>
-                            </View>
-                        </TouchableHighlight>}>
+                    renderItem={({item}) => <ItemRanking usuario={item} />}>
                 </FlatList>
                 <BotaoCustomizado texto='Voltar' onPress = {this.voltar.bind(this)} />
             </View>
@@ -75,20 +65,5 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#333',
         padding: 10
-    },
-    lista: {
-        alignSelf: 'stretch',
-        flex: 1,
-        alignItems: 'flex-start',
-        backgroundColor: '#AAA',
-    },
-    item: {
-        backgroundColor: '#FFF',
-        alignSelf: 'stretch',
-        flex:1,
-        marginBottom: 2
-    },
-    texto: {
-        fontSize:20
     }
 });

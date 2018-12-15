@@ -22,7 +22,7 @@ export default class Resultado extends Component {
     }
 
     async componentWillMount() {
-      this.retrieveData = async () => {
+      this.recuperaPontuacao = async () => {
           try {
             const value = await AsyncStorage.getItem('pontuação');
             if (value !== null) {
@@ -30,12 +30,11 @@ export default class Resultado extends Component {
                   pontuacao: value
               })
             }
-            console.log(value);
            } catch (error) {
-              console.log(error)
+              alert(error)
            }
         }
-      this.retrieveData();
+      this.recuperaPontuacao();
     }
 
     voltar(){

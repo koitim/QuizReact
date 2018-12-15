@@ -3,7 +3,10 @@ import {
   StyleSheet,
   View
 } from 'react-native';
-import {validaEmail, validaSenha} from './LoginPresenter'
+import {
+  validaEmail,
+  validaSenha
+} from './Funcoes'
 import {
   inicializeFirebase,
   logar
@@ -20,14 +23,7 @@ export default class Login extends React.Component {
 
   constructor() {
     super();
-    this.state = {
-      email: '',
-      senha: '',
-      estiloInputEmail: styles.input,
-      estiloInputSenha: styles.input,
-      msgErroEmail: '',
-      msgErroSenha: ''
-    };
+    this.state = dadosIniciais;
   }
 
   componentWillMount() {
@@ -38,62 +34,50 @@ export default class Login extends React.Component {
     const {email, senha} = this.state;
     let contemErros = false;
     if (validaEmail(email)) {
-      this.emailOK();
+      this.atualizaEmail(styles.input, '');
     }
     else {
-      this.trataErroEmail();
+      this.atualizaEmail(styles.inputError, 'Email inválido.');
       contemErros = true;
     }
     if (validaSenha(senha)) {
-      this.senhaOK();
+      this.atualizaSenha(styles.input, '');
     }
     else {
-      this.trataErroSenha();
+      this.atualizaSenha(styles.inputError, 'Senha é obrigatório.');
       contemErros = true;
     }
     if (!contemErros) {
-      const promisse = logar(email, senha);
-      promisse
+      logar(email, senha)
         .then(() => {
-          this.setState({
-            email: '',
-            senha: ''
-          });
-          this.props.navigation.navigate('Quiz');
+          this.mudarTela('Quiz');
         })
-        .catch((erro) => {alert(erro)});
+        .catch((erro) => {
+          alert(erro)
+        });
     }
   }
 
+  mudarTela(tela) {
+    this.props.navigation.navigate(tela);
+    this.setState(dadosIniciais);
+  }
+
   cadastrar() {
-    this.props.navigation.navigate('Cadastro');
+    this.mudarTela('Cadastro');
   }
 
-  emailOK = () => {
+  atualizaEmail = (estilo, msgErro) => {
     this.setState({
-      estiloInputEmail: styles.input,
-      msgErroEmail: ''
+      estiloInputEmail: estilo,
+      msgErroEmail: msgErro
     });
   }
 
-  trataErroEmail = () => {
+  atualizaSenha = (estilo, msgErro) => {
     this.setState({
-      estiloInputEmail: styles.inputError,
-      msgErroEmail: 'Email inválido.'
-    });
-  }
-
-  senhaOK = () => {
-    this.setState({
-      estiloInputSenha: styles.input,
-      msgErroSenha: ''
-    });
-  }
-
-  trataErroSenha = () => {
-    this.setState({
-      estiloInputSenha: styles.inputError,
-      msgErroSenha: 'Senha é obrigatória.'
+      estiloInputSenha: estilo,
+      msgErroSenha: msgErro
     });
   }
   
@@ -148,3 +132,12 @@ const styles = StyleSheet.create({
     marginBottom: 10
   }
 });
+
+const dadosIniciais = {
+  email: '',
+  senha: '',
+  estiloInputEmail: styles.input,
+  estiloInputSenha: styles.input,
+  msgErroEmail: '',
+  msgErroSenha: ''
+};
